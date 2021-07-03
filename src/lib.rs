@@ -38,11 +38,7 @@ pub fn initialize() {
 pub fn set(row: i32, column: i32, value: bool) {
     let mut state = STATE.lock().unwrap();
     if let Some(world) = &mut state.world {
-        if value {
-            world.spawn(row, column)
-        } else {
-            world.kill(row, column)
-        }
+        world.set(row, column, value)
     } else {
         console_log("Cannot set, world is not initialized!");
     }

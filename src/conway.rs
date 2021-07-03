@@ -26,14 +26,9 @@ impl World {
         self.cells[self.pos(x, y)]
     }
 
-    pub fn spawn(&mut self, x: i32, y: i32) {
+    pub fn set(&mut self, x: i32, y: i32, value: bool) {
         let pos = self.pos(x, y);
-        self.cells[pos] = true;
-    }
-
-    pub fn kill(&mut self, x: i32, y: i32) {
-        let pos = self.pos(x, y);
-        self.cells[pos] = false;
+        self.cells[pos] = value;
     }
 
     fn neighbors(&self, x: i32, y: i32) -> Vec<bool> {
@@ -44,7 +39,7 @@ impl World {
             .collect::<Vec<bool>>()
     }
 
-    pub fn alive_neighbors(&self, x: i32, y: i32) -> i32 {
+    fn alive_neighbors(&self, x: i32, y: i32) -> i32 {
         self.neighbors(x, y).iter().filter(|&&v| v).count() as i32
     }
 
@@ -57,11 +52,11 @@ impl World {
 
                 if self.is_alive(x, y) {
                     if alive_neighbors < 2 || alive_neighbors > 3 {
-                        new_world.kill(x, y);
+                        new_world.set(x, y, false);
                     }
                 } else {
                     if alive_neighbors == 3 {
-                        new_world.spawn(x, y);
+                        new_world.set(x, y, true);
                     }
                 }
             }
@@ -89,30 +84,30 @@ mod tests {
     #[test]
     fn get_wraps_around() {
         let mut world = World::new(5);
-        world.spawn(1, 2);
+        world.set(1, 2, true);
         assert_eq!(world.is_alive(6, 7), true);
     }
 
     #[test]
     fn test_spawn() {
         let mut world = World::new(5);
-        world.spawn(1, 1);
+        world.set(1, 1, true);
         assert_eq!(world.is_alive(1, 1), true);
     }
 
     #[test]
     fn test_kill() {
         let mut world = World::new(5);
-        world.spawn(1, 1);
-        world.kill(1, 1);
+        world.set(1, 1, true);
+        world.set(1, 1, false);
         assert_eq!(world.is_alive(1, 1), false);
     }
 
     #[test]
     fn alive_neighbors() {
         let mut world = World::new(10);
-        world.spawn(1, 1);
-        world.spawn(1, 3);
+        world.set(1, 1, true);
+        world.set(1, 3, true);
 
         assert_eq!(world.alive_neighbors(1, 2), 2);
     }
@@ -120,7 +115,7 @@ mod tests {
     #[test]
     fn test_step_single_cell_dies() {
         let mut world = World::new(10);
-        world.spawn(1, 1);
+        world.set(1, 1, true);
         world = world.step();
         assert_eq!(world.is_alive(1, 1), false);
     }
@@ -128,9 +123,9 @@ mod tests {
     #[test]
     fn test_step_three_cells_rotate() {
         let mut world = World::new(10);
-        world.spawn(2, 1);
-        world.spawn(2, 2);
-        world.spawn(2, 3);
+        world.set(2, 1, true);
+        world.set(2, 2, true);
+        world.set(2, 3, true);
         world = world.step();
         assert_eq!(world.is_alive(1, 2), true);
         assert_eq!(world.is_alive(2, 2), true);
