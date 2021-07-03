@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Conway game of life</title>
+
+	<style>
+		html {
+			background-color: black;
+		}
+
+		.row {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: no-wrap;
+		}
+
+		.element {
+			width: 15px;
+			height: 15px;
+			margin-right: 3px;
+			margin-bottom: 3px;
+			background-color: black;
+		}
+
+		.element.active {
+			background-color: yellow;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="grid-container"></div>
+	<script type="module" src="index.js"></script>
+	<button type="button" id="step">Step</button>
+	<button type="button" id="run">Run</button>
+</body>
+
+</html>
